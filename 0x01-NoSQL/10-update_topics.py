@@ -7,4 +7,4 @@ import pymongo
 
 def update_topics(mongo_collection, name, topics):
     """ update document """
-    mongo_collection.update_one({"name": name}, { "$set": {"topics": topics}})
+    mongo_collection.update_one({"name": name}, {"$set": {"topics": topics}})
