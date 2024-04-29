@@ -6,4 +6,5 @@ import pymongo
 
 
 def list_all(mongo_collection):
+    """ return all documents """
     return list(mongo_collection.find({}))
