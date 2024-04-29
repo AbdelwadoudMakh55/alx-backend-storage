@@ -12,6 +12,5 @@ def top_students(mongo_collection):
             avg = sum([topic.get('score') for topic in student.get('topics')]) \
                   / len(student.get('topics'))
             value = {'$set': {'averageScore': avg}}
-            mongo_collection.update({"id_": student.get('id_')}, value)
-    return mongo_collection.find().sort({"averageScore": -1})
-
+            mongo_collection.update_many({"name": student.get('name')}, value)
+    return list(mongo_collection.find().sort("averageScore": -1))
