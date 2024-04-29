@@ -22,4 +22,4 @@ if __name__ == '__main__':
     ips_by_log = list(col.aggregate(pipeline))
     print("IPs:")
     for i in range(10):
-        print(f'{ips_by_log[i].get("_id")}: {ips_by_log[i].get("count")}')
+        print(f'\t{ips_by_log[i].get("_id")}: {ips_by_log[i].get("count")}')
