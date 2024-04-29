@@ -18,8 +18,9 @@ if __name__ == '__main__':
     print(f'{col.count_documents({"method": "GET", "path": "/status"})} status check')
     match_ip = {"$group": {"_id": "$ip", "count": {"$sum": 1}}}
     sort_by_count = {"$sort": {"count": -1}}
-    pipeline = [match_ip, sort_by_count]
+    limit = {"$limit": 10}
+    pipeline = [match_ip, sort_by_count, limit]
     ips_by_log = list(col.aggregate(pipeline))
     print("IPs:")
-    for i in range(10):
-        print(f'\t{ips_by_log[i].get("_id")}: {ips_by_log[i].get("count")}')
+    for ip in ips_by_log:
+        print(f'\t{ip.get("_id")}: {ip.get("count")}')
