@@ -1,4 +1,4 @@
 // Delete all document that match
 db.school.remove(
-    {name: "Holberton school"}
+    {"name": "Holberton school"}
 )
