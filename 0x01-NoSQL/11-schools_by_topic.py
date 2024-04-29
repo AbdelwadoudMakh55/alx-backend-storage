@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Update document inside MongoDB collection
+find specific documents
 """
 import pymongo
 
 
-def update_topics(mongo_collection, name, topics):
-    """ update document """
-    mongo_collection.update_many({"name": name}, {"$set": {"topics": topics}})
+def schools_by_topic(mongo_collection, topic):
+    """ find and return documents matching query """
+    schools = list(mongo_collection.find({}))
+    return [school for school in schools if topic in school.get("topics")]
