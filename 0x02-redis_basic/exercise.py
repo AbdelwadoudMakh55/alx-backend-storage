@@ -21,3 +21,9 @@ class Cache:
         if not self._redis.exists(key) or fn is None:
             return self._redis.get(key)
         return fn(self._redis.get(key))
+
+    def get_int(self, key: str) -> int:
+        return self.get(key, int)
+
+    def get_str(self, key: str) -> str:
+        return self.get(key, lambda d: d.decode("utf-8"))
