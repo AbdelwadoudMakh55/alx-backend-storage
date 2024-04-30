@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Writing strings to Redis
+Python module implementing a simple Redis cache
 """
 import redis
 import uuid
@@ -9,6 +9,7 @@ from functools import wraps
 
 
 def count_calls(method: Callable) -> Callable:
+    """ Counting calls of function """
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         self._redis.incr(method.__qualname__)
@@ -17,6 +18,7 @@ def count_calls(method: Callable) -> Callable:
 
 
 def call_history(method: Callable) -> Callable:
+    """ Keeping call history (inputs and outputs) """
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         self._redis.rpush(f'{method.__qualname__}:inputs', str(args))
@@ -34,19 +36,23 @@ class Cache:
     @count_calls
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
+        """ Store data inside redis server """
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
 
     def get(self, key: str, fn: Callable = None):
+        """ Retrieve data from redis server """
         if not self._redis.exists(key) or fn is None:
             return self._redis.get(key)
         return fn(self._redis.get(key))
 
     def get_int(self, key: str) -> int:
+        """ Retrieve data as int from redis server """
         return self.get(key, int)
 
     def get_str(self, key: str) -> str:
+        """ Retrieve data as str from redis server """
         return self.get(key, lambda d: d.decode("utf-8"))
 
 
