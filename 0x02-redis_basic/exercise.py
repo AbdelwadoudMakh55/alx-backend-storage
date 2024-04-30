@@ -2,8 +2,6 @@
 """
 Python module implementing a simple Redis cache
 """
-import redis
-import uuid
 from typing import Callable, Union
 from functools import wraps
 
@@ -30,6 +28,7 @@ def call_history(method: Callable) -> Callable:
 
 class Cache:
     def __init__(self) -> None:
+        import redis
         self._redis = redis.Redis()
         self._redis.flushdb()
 
@@ -37,6 +36,7 @@ class Cache:
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ Store data inside redis server """
+        import uuid
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
@@ -62,7 +62,7 @@ def replay(fn: Callable) -> None:
     inputs = cache._redis.lrange("{}:inputs".format(fn.__qualname__), 0, -1)
     outputs = cache._redis.lrange("{}:outputs".format(fn.__qualname__), 0, -1)
     num_calls = cache.get_int(fn.__qualname__)
-    print(f'{fn.__qualname__} was called {num_calls} times:')
+    print(f'{fn.__qualname__} was called {num_calls.decode("utf-8")} times:')
     for pair in tuple(zip(inputs, outputs)):
         print(f'{fn.__qualname__}(*{pair[0].decode("utf-8")}) -> \
 {pair[1].decode("utf-8")}')
