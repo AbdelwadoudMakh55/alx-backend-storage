@@ -48,3 +48,14 @@ class Cache:
 
     def get_str(self, key: str) -> str:
         return self.get(key, lambda d: d.decode("utf-8"))
+
+
+def replay(fn: Callable) -> None:
+    cache = fn.__self__
+    inputs = cache._redis.lrange("{}:inputs".format(fn.__qualname__), 0, -1)
+    outputs = cache._redis.lrange("{}:outputs".format(fn.__qualname__), 0, -1)
+    num_calls = cache.get_int(fn.__qualname__)
+    print(f'{fn.__qualname__} was called {num_calls} times:')
+    for pair in tuple(zip(inputs, outputs)):
+        print(f'{fn.__qualname__}(*{pair[0].decode("utf-8")}) -> \
+        {pair[1].decode("utf-8")}')
