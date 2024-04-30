@@ -65,4 +65,4 @@ def replay(fn: Callable) -> None:
     print(f'{fn.__qualname__} was called {num_calls} times:')
     for pair in tuple(zip(inputs, outputs)):
         print(f'{fn.__qualname__}(*{pair[0].decode("utf-8")}) -> \
-        {pair[1].decode("utf-8")}')
+{pair[1].decode("utf-8")}')
