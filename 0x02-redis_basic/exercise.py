@@ -51,6 +51,7 @@ class Cache:
 
 
 def replay(fn: Callable) -> None:
+    """ Display infos """
     cache = fn.__self__
     inputs = cache._redis.lrange("{}:inputs".format(fn.__qualname__), 0, -1)
     outputs = cache._redis.lrange("{}:outputs".format(fn.__qualname__), 0, -1)
