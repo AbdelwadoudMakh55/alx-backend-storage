@@ -10,9 +10,9 @@ from functools import wraps
 
 def count_calls(method: Callable) -> Callable:
     @wraps(method)
-    def wrapper(*args):
-        args[0]._redis.incr(method.__qualname__)
-        return method(*args)
+    def wrapper(self, *args, **kwargs):
+        self._redis.incr(method.__qualname__)
+        return method(self, *args, **kwargs)
     return wrapper
 
 
