@@ -14,9 +14,10 @@ def count_calls(method: Callable) -> Callable:
 
     @wraps(method)
     def wrapper(url):
-        r.incr(f'count:{url}')
         if r.get(url):
+            r.incr(f'count:{url}')
             return r.get(url).decode("utf-8")
+        r.incr(f'count:{url}')
         content = method(url)
         r.setex(url, 10, content)
         return content
