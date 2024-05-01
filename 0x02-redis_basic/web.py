@@ -14,11 +14,15 @@ def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(url):
         r = redis.Redis()
-        cache_k = f'cache:{url}'
-        r.expire(f'count:{url}', 10)
-        r.incr(f'count:{url}')
-        if not r.exists(cache_k) or time.time() - float(r.get(cache_k)) > 10:
-            r.set(cache_k, time.time())
+        if not r.exists(f'count:{url}'):
+            r.incr(f'count:{url}')
+            r.expire(f'count:{url}', 10)
+        elif r.ttl(f'count:{url}') <= 0:
+            r.set(f'count:{url}', 0)
+            r.incr(f'count:{url}')
+            r.expire(f'count:{url}', 10)
+        else:
+            r.incr(f'count:{url}')
         return method(url)
     return wrapper
 
