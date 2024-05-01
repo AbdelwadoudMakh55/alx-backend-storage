@@ -30,11 +30,11 @@ def call_history(method: Callable) -> Callable:
 
 def replay(fn: Callable) -> None:
     """ Display infos """
-    cache = fn.__self__
+    cache = redis.Redis()
     key = fn.__qualname__
-    inputs = cache._redis.lrange("{}:inputs".format(fn.__qualname__), 0, -1)
-    outputs = cache._redis.lrange("{}:outputs".format(fn.__qualname__), 0, -1)
-    num_calls = cache.get_int(fn.__qualname__)
+    inputs = cache._redis.lrange(f'{key}:inputs', 0, -1)
+    outputs = cache._redis.lrange(f'{key}:outputs', 0, -1)
+    num_calls = cache.get_int(key)
     print(f'{key} was called {num_calls} times:')
     for i, o in zip(inputs, outputs):
         print(f'{key}(*{i.decode("utf-8")}) -> {o.decode("utf-8")}')
