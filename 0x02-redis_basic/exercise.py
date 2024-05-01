@@ -34,7 +34,7 @@ def replay(fn: Callable) -> None:
     key = fn.__qualname__
     inputs = cache._redis.lrange(f'{key}:inputs', 0, -1)
     outputs = cache._redis.lrange(f'{key}:outputs', 0, -1)
-    num_calls = cache.get_int(key)
+    num_calls = int(cache.get(key))
     print(f'{key} was called {num_calls} times:')
     for i, o in zip(inputs, outputs):
         print(f'{key}(*{i.decode("utf-8")}) -> {o.decode("utf-8")}')
