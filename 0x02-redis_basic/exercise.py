@@ -56,7 +56,7 @@ class Cache:
         """ Retrieve data as str from redis server """
         return self.get(key, lambda d: d.decode("utf-8"))
 
-
+"""
 def replay(fn: Callable) -> None:
     """ Display infos """
     cache = fn.__self__
@@ -67,3 +67,4 @@ def replay(fn: Callable) -> None:
     for pair in tuple(zip(inputs, outputs)):
         print(f'{fn.__qualname__}(*{pair[0].decode("utf-8")}) -> \
 {pair[1].decode("utf-8")}')
+"""
