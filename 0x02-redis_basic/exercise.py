@@ -4,6 +4,7 @@ Python module implementing a simple Redis cache
 """
 
 
+import redis
 from typing import Callable, Union
 from functools import wraps
 
@@ -32,8 +33,8 @@ def replay(fn: Callable) -> None:
     """ Display infos """
     cache = redis.Redis()
     key = fn.__qualname__
-    inputs = cache._redis.lrange(f'{key}:inputs', 0, -1)
-    outputs = cache._redis.lrange(f'{key}:outputs', 0, -1)
+    inputs = cache.lrange(f'{key}:inputs', 0, -1)
+    outputs = cache.lrange(f'{key}:outputs', 0, -1)
     num_calls = int(cache.get(key))
     print(f'{key} was called {num_calls} times:')
     for i, o in zip(inputs, outputs):
@@ -43,7 +44,6 @@ def replay(fn: Callable) -> None:
 class Cache:
     def __init__(self) -> None:
         """ Initialize Cache instance """
-        import redis
         self._redis = redis.Redis()
         self._redis.flushdb()
 
