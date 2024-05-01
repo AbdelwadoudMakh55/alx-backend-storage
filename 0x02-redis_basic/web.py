@@ -13,8 +13,8 @@ def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(url):
         r = redis.Redis()
-        r.incr(f'count:{url}')
         r.expire(f'count:{url}', 10)
+        r.incr(f'count:{url}')
         return method(url)
     return wrapper
 
