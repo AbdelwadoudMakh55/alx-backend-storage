@@ -6,7 +6,6 @@ import redis
 import requests
 from functools import wraps
 from typing import Callable
-import time
 
 
 def count_calls(method: Callable) -> Callable:
