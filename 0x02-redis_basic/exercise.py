@@ -28,6 +28,7 @@ def call_history(method: Callable) -> Callable:
 
 class Cache:
     def __init__(self) -> None:
+        """ Initialize Cache instance """
         import redis
         self._redis = redis.Redis()
         self._redis.flushdb()
