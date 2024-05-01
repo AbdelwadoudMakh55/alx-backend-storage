@@ -56,6 +56,7 @@ class Cache:
         """ Retrieve data as str from redis server """
         return self.get(key, lambda d: d.decode("utf-8"))
 
+
 """
 def replay(fn: Callable) -> None:
     """ Display infos """
