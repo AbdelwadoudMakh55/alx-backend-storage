@@ -10,9 +10,10 @@ from typing import Callable
 
 def count_calls(method: Callable) -> Callable:
     """ Counting calls of function """
+    r = redis.Redis()
+
     @wraps(method)
     def wrapper(url):
-        r = redis.Redis()
         r.incr(f'count:{url}')
         if r.exists(f'cache:{url}'):
             return r.get(f'cache:{url}').decode("utf-8")
