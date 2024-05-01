@@ -8,12 +8,13 @@ from functools import wraps
 from typing import Callable
 import time
 
+r = redis.Redis()
+
 
 def count_calls(method: Callable) -> Callable:
     """ Counting calls of function """
     @wraps(method)
     def wrapper(url):
-        r = redis.Redis()
         if not r.exists(f'count:{url}'):
             r.incr(f'count:{url}')
             r.expire(f'count:{url}', 10)
