@@ -12,7 +12,6 @@ from functools import wraps
 
 def count_calls(method: Callable) -> Callable:
     """ Counting calls of function """
-
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         self._redis.incr(method.__qualname__)
@@ -22,23 +21,23 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """ Keeping call history (inputs and outputs) """
-
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        self._redis.rpush(f'{method.__qualname__}:inputs', str(args))
+        key = method.__qualname__
+        self._redis.rpush(f'{key}:inputs', str(args))
         output = method(self, *args, **kwargs)
-        self._redis.rpush(f'{method.__qualname__}:outputs', output)
+        self._redis.rpush(f'{key}:outputs', output)
         return output
     return wrapper
 
 
-def replay(fn: Callable):
+def replay(fn: Callable) -> None:
     """ Display infos """
-    cache = redis.Redis()
+    cache = fn.__self__
     key = fn.__qualname__
-    inputs = cache.lrange(f'{key}:inputs', 0, -1)
-    outputs = cache.lrange(f'{key}:outputs', 0, -1)
-    num_calls = int(cache.get(key))
+    inputs = cache._redis.lrange(f'{key}:inputs', 0, -1)
+    outputs = cache._redis.lrange(f'{key}:outputs', 0, -1)
+    num_calls = cache.get_int(key)
     print(f'{key} was called {num_calls} times:')
     for i, o in zip(inputs, outputs):
         print(f'{key}(*{i.decode("utf-8")}) -> {o.decode("utf-8")}')
