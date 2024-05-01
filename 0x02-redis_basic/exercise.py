@@ -4,6 +4,7 @@ Python module implementing a simple Redis cache
 """
 
 
+import uuid
 import redis
 from typing import Callable, Union
 from functools import wraps
@@ -11,6 +12,7 @@ from functools import wraps
 
 def count_calls(method: Callable) -> Callable:
     """ Counting calls of function """
+
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         self._redis.incr(method.__qualname__)
@@ -20,6 +22,7 @@ def count_calls(method: Callable) -> Callable:
 
 def call_history(method: Callable) -> Callable:
     """ Keeping call history (inputs and outputs) """
+
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         self._redis.rpush(f'{method.__qualname__}:inputs', str(args))
@@ -29,7 +32,7 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(fn: Callable) -> None:
+def replay(fn: Callable):
     """ Display infos """
     cache = redis.Redis()
     key = fn.__qualname__
@@ -51,7 +54,6 @@ class Cache:
     @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """ Store data inside redis server """
-        import uuid
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
