@@ -3,10 +3,10 @@
 Python module implementing a simple Redis cache
 """
 
-import uuid
+from functools import wraps
 import redis
 from typing import Callable, Union
-from functools import wraps
+import uuid
 
 
 def count_calls(method: Callable) -> Callable:
@@ -45,6 +45,9 @@ def replay(fn: Callable) -> None:
 
 
 class Cache:
+    """
+    Class of Redis cache
+    """
     def __init__(self) -> None:
         """ Initialize Cache instance """
         self._redis = redis.Redis()
