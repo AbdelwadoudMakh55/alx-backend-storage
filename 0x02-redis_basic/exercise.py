@@ -40,7 +40,9 @@ def replay(fn: Callable) -> None:
     num_calls = cache.get_int(key)
     print(f'{key} was called {num_calls} times:')
     for i, o in zip(inputs, outputs):
-        print(f'{key}(*{i.decode("utf-8")}) -> {o.decode("utf-8")}')
+        in_ = i.decode("utf-8") if i else ""
+        out = o.decode("utf-8") if o else ""
+        print(f'{key}(*{in_}) -> {out}')
 
 
 class Cache:
