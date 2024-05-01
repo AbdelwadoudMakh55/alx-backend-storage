@@ -15,16 +15,10 @@ def count_calls(method: Callable) -> Callable:
     """ Counting calls of function """
     @wraps(method)
     def wrapper(url):
-        if not r.exists(f'count:{url}'):
-            r.incr(f'count:{url}')
-            r.expire(f'count:{url}', 10)
-        elif r.ttl(f'count:{url}') <= 0:
-            r.set(f'count:{url}', 0)
-            r.incr(f'count:{url}')
-            r.expire(f'count:{url}', 10)
-        else:
-            r.incr(f'count:{url}')
-        return method(url)
+        r.incr(f'count:{url}')
+        content = method(url)
+        r.setex(f'cache:{url}', 10, content)
+        return content
     return wrapper
 
 
