@@ -15,6 +15,9 @@ def count_calls(method: Callable) -> Callable:
     """ Counting calls of function """
     @wraps(method)
     def wrapper(url):
+        if r.exists(f'cache:{url}'):
+            r.incr(f'count:{url}')
+            return r.get(f'cache:{url}').decode("utf-8")
         r.incr(f'count:{url}')
         content = method(url)
         r.setex(f'cache:{url}', 10, content)
